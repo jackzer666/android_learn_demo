@@ -64,4 +64,12 @@ fun main() {
     // 10. 分组
     val groupRes = questions.groupBy { it.difficulty }
     println(groupRes)
+
+    // 11. 链式调用
+    val res = questions
+        .filter { it.difficulty >=3 }
+        .sortedByDescending { it.views }
+        .firstOrNull()
+        ?.stem
+    println(res)
 }
