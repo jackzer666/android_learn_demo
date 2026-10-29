@@ -21,7 +21,11 @@ import com.example.android_learn_demo.ui.theme.Android_learn_demoTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 安全间距
         enableEdgeToEdge()
+
+        // 设置页面内容，写ComposeUI
         setContent {
             TestOne()
         }

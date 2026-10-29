@@ -6,12 +6,13 @@ data class Student(
     var name: String, // var声明的 可变
     val className: String,
     var score: Int = 60, // 可变 且有默认值
+    var test: List<String>
 )
 
 fun main() {
-    val stu1 = Student(1, "zhangsan", "1-2", 88)
-    val stu2 = Student(id = 2, name = "lisi", className = "1-3", score = 45)
-    val stu3 = Student(id = 2, name = "lisi", className = "1-3", score = 45)
+    val stu1 = Student(1, "zhangsan", "1-2", 88, listOf("A", "B"))
+    val stu2 = Student(id = 2, name = "lisi", className = "1-3", score = 45, listOf("A", "B"))
+    val stu3 = Student(id = 2, name = "lisi", className = "1-3", score = 45, listOf("A", "B"))
 
     // 数据类内部自动实现了toString方法，数据类和普通类是有区别的。普通类打印出来类似地址，看不到内部字段值
     println(stu1)
