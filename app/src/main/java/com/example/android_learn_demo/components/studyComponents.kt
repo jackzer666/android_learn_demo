@@ -2,6 +2,7 @@ package com.example.android_learn_demo.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,14 +15,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -344,6 +351,79 @@ fun IconDemo() {
                 tint = Color.White,
                 modifier = Modifier.size(24.dp),
             )
+        }
+    }
+}
+
+@Composable
+fun ButtonDemo() {
+    Column(
+        modifier = Modifier
+            .padding(top = 30.dp)
+            .fillMaxSize()
+            .background(color = Color.Cyan),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        // 由于按钮的默认样式 覆盖起来比较麻烦，一般点击用Box + 模拟点击
+        Button(
+            modifier = Modifier.background(color = Color.Blue),
+            onClick = {
+
+            }
+        ) {
+            Text("点我")
+        }
+
+        // 填充色调按钮
+        FilledTonalButton(onClick = {}) { Text("点我") }
+
+        // 描边按钮
+        OutlinedButton(onClick = {}) { Text("点我") }
+
+        // 文本按钮
+        TextButton(onClick = {}) { Text("点我") }
+
+        // 凸起按钮
+        ElevatedButton(onClick = {}) { Text("点我") }
+
+        // 蓝色圆角按钮
+        Box(
+            modifier = Modifier
+                .width(120.dp)
+                .height(44.dp)
+                .clip(shape = RoundedCornerShape(size = 22.dp))
+                .background(Color(0xFF1A73E8))      // 蓝色背景
+                .clickable { /* 点击事件 */ },
+            contentAlignment = Alignment.Center
+        ) {
+            Text("登录", color = Color.White, fontSize = 16.sp)
+        }
+
+        // 橙色圆角按钮
+        Box(
+            modifier = Modifier
+                .width(120.dp)
+                .height(44.dp)
+                .clip(shape = RoundedCornerShape(size = 8.dp))      // 小圆角
+                .background(Color(0xFFFF9800))        // 橙色背景
+                .clickable { },
+            contentAlignment = Alignment.Center
+        ) {
+            Text("打卡", color = Color.Black, fontSize = 16.sp)
+        }
+
+        // 带边框的透明按钮
+        Box(
+            modifier = Modifier
+                .width(120.dp)
+                .height(44.dp)
+                .clip(shape = RoundedCornerShape(size = 22.dp))
+                .border( width = 1.dp, Color(0xFF1A73E8),  shape = RoundedCornerShape( size = 22.dp))
+                .clickable { },
+            contentAlignment = Alignment.Center
+        ) {
+            Text("注册", color = Color(0xFF1A73E8), fontSize = 16.sp)
         }
     }
 }
