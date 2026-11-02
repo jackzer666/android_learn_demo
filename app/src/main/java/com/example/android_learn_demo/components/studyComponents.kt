@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.example.android_learn_demo.R
 
 @Composable
@@ -260,6 +262,50 @@ fun NetworkImageDemo() {
                 .clip(CircleShape)
                 .background(color = Color.Green),
             contentScale = ContentScale.Crop,
+        )
+    }
+}
+
+@Composable
+fun NetworkImageDemo02() {
+    Column(
+        modifier = Modifier
+            .padding(top = 30.dp)
+            .fillMaxSize()
+            .background(color = Color.Cyan),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // 精细控制加载过程
+        SubcomposeAsyncImage(
+            model = "https://img01.yzcdn.cn/vant/cat.jpegs",
+            contentDescription = "这是网络图片",
+            modifier = Modifier
+                .size(width = 200.dp, height = 200.dp),
+            contentScale = ContentScale.Crop,
+            // 加载中
+            loading = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(color = Color.Green),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            },
+            // 加载失败
+            error = {
+                Box(
+                    modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "加载失败",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                    )
+                }
+            }
         )
     }
 }
