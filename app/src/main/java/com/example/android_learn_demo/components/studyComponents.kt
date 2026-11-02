@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -355,6 +356,7 @@ fun IconDemo() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun ButtonDemo() {
     Column(
@@ -424,6 +426,69 @@ fun ButtonDemo() {
             contentAlignment = Alignment.Center
         ) {
             Text("注册", color = Color(0xFF1A73E8), fontSize = 16.sp)
+        }
+    }
+}
+
+@Composable
+fun HomeTopBar() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(114.dp)
+                .background(color = Color.LightGray)
+                .padding(top = 50.dp, start = 16.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            // 左上角扫码图标
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {},
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("扫", fontSize = 14.sp)
+            }
+
+            // 中间的搜索框
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(32.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFFF5F5F5))
+                    .clickable {},
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("🔍", fontSize = 14.sp)
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        "京东高频面试题",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            // 右侧打卡按钮
+            Box(
+                modifier = Modifier
+                    .width(74.dp)
+                    .height(28.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color(0xFFFF9800))
+                    .clickable {},
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("打卡", fontSize = 16.sp, color = Color.Black)
+            }
+
         }
     }
 }
