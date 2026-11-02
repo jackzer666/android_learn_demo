@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.android_learn_demo.R
 
 @Composable
@@ -250,14 +252,14 @@ fun NetworkImageDemo() {
             .background(color = Color.Cyan),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(R.drawable.demo01),
-            contentDescription = "这里是无障碍阅读",
+        AsyncImage(
+            model = "https://img01.yzcdn.cn/vant/cat.jpeg",
+            contentDescription = "这是网络图片",
             modifier = Modifier
-                .size(width = 200.dp, height = 100.dp)
-                .clip(RoundedCornerShape(20.dp))
+                .size(width = 200.dp, height = 200.dp)
+                .clip(CircleShape)
                 .background(color = Color.Green),
-            contentScale = ContentScale.FillBounds,
+            contentScale = ContentScale.Crop,
         )
     }
 }
