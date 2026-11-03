@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.android_learn_demo.components.HomeTopBar
+import com.example.android_learn_demo.components.ParentComp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +26,9 @@ class MainActivity : ComponentActivity() {
 //            NetworkImageDemo02()
 //            IconDemo()
 //            ButtonDemo()
-            HomeTopBar()
+//            HomeTopBar()
+//            CounterDemo01()
+            ParentComp()
         }
-
     }
 }
