@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.android_learn_demo.components.ParentComp
+import com.example.android_learn_demo.components.ListDemo2
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
 //            ButtonDemo()
 //            HomeTopBar()
 //            CounterDemo01()
-            ParentComp()
+//            ParentComp()
+            ListDemo2()
         }
     }
 }
