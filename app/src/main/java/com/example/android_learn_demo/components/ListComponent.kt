@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -240,4 +243,41 @@ fun CategoryListDemo() {
             }
         }
     }
+}
+
+@Composable
+fun CoroutineScopeDemo() {
+    var result by remember { mutableStateOf("点击按钮加载数据") }
+    var loading by remember { mutableStateOf(false) }
+    // 获取协程作用域
+    val scope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(result, fontSize = 18.sp)
+        Button(
+            onClick = {
+                // 1、在lambda中，是不允许裸返回的，即不能直接return
+                // 2、return后跟的@xx，表示结束哪个函数。在这里理解为Button是一个函数执行，onClick只是一个参数，因此应该写@Button
+                if (loading) return@Button // 防止重复点击
+                loading = true
+                result = "加载中"
+                // 在某个操作中直接发起用rememberCoroutineScope，而不是通过LaunchEffect中监听发起
+                scope.launch {
+                    // 调用接口 suspend函数
+                    delay(2000.milliseconds)
+                    result = "加载完成，数据已经返回"
+                    loading = false
+                }
+            },
+            enabled = !loading
+        ) {
+            Text(if (loading) "加载中..." else "点击开始加载")
+        }
+    }
+
+
 }
