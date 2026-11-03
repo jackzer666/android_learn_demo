@@ -1,7 +1,11 @@
 package com.example.android_learn_demo.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,13 +16,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ListDemo() {
@@ -137,5 +150,94 @@ fun QuestionChildItem(item: QuestionItem2) {
             fontSize = 13.sp,
             color = Color.Gray
         )
+    }
+}
+
+@Composable
+fun LaunchedEffectDemo() {
+    var text by remember { mutableStateOf("加载中") }
+
+    // 开启副作用，网络请求获取数据
+    // Unit表示只执行一次
+    LaunchedEffect(Unit) {
+        // 模拟网络延迟
+        delay(2000.milliseconds)
+        text = "面试题列表"
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = text,
+            fontSize = 20.sp,
+        )
+    }
+}
+
+@Composable
+fun CategoryListDemo() {
+    // 分类数据
+    val categories = listOf("Android", "Java", "Kotlin")
+    var questionList by remember { mutableStateOf<List<QuestionItem2>>(emptyList()) }
+
+
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(selectedIndex) {
+        // 模拟网络请求
+        questionList = emptyList()
+        delay(500.milliseconds)
+        questionList = when(selectedIndex) {
+            0 -> listOf(
+                QuestionItem2(1, "测试文案1", 1, 100),
+                QuestionItem2(2, "测试文案2", 3, 200),
+                QuestionItem2(3, "测试文案3", 4, 300)
+            )
+            1 -> listOf(
+                QuestionItem2(4, "测试文案4", 1, 100),
+                QuestionItem2(5, "测试文案5", 3, 200),
+                QuestionItem2(6, "测试文案6", 4, 300)
+            )
+            else -> listOf(
+                QuestionItem2(7, "测试文案7", 1, 100),
+                QuestionItem2(8, "测试文案8", 3, 200),
+                QuestionItem2(9, "测试文案9", 4, 300)
+            )
+        }
+    }
+
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // tab分类
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 30.dp, start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            categories.forEachIndexed { index, category ->
+                Text(
+                    text = category,
+                    fontSize = 16.sp,
+                    fontWeight = if (index == selectedIndex) FontWeight.Bold else FontWeight.Normal,
+                    color = if (index == selectedIndex) Color.Black else Color.Gray,
+                    modifier = Modifier.clickable {
+                        selectedIndex = index
+                    }
+                )
+            }
+        }
+
+        // 列表
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(questionList, key = { it.id }) {
+                QuestionChildItem(it)
+                HorizontalDivider(color = Color.LightGray)
+            }
+        }
     }
 }
