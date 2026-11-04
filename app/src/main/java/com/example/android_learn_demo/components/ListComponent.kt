@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -280,4 +283,47 @@ fun CoroutineScopeDemo() {
     }
 
 
+}
+
+@Composable
+fun BasicPagerDemo() {
+    val colors = listOf(
+        Color(0xFFE91E63),
+        Color(0xFF2196F3),
+        Color(0xFF4CAF50)
+    )
+
+    val pagerState = rememberPagerState(
+        pageCount = { colors.size }
+    )
+
+    // 副作用
+    LaunchedEffect(pagerState) {
+        while (true) {
+            delay(2000.milliseconds)
+            // 如果用户在手动滑动，则跳过本次循环
+            if (pagerState.isScrollInProgress) continue
+
+            val nextPage = if (pagerState.currentPage == colors.size - 1) 0 else pagerState.currentPage + 1
+            pagerState.animateScrollToPage(nextPage)
+        }
+    }
+
+    HorizontalPager(
+        state = pagerState
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(2.6f) // 宽高比
+                .background(colors[it]),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "第${it + 1}页",
+                fontSize = 24.sp,
+                color = Color.White
+            )
+        }
+    }
 }

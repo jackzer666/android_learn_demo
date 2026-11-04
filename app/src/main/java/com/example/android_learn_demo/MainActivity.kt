@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.android_learn_demo.components.CoroutineScopeDemo
+import com.example.android_learn_demo.components.BasicPagerDemo
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
 //            ListDemo2()
 //            LaunchedEffectDemo()
 //            CategoryListDemo()
-            CoroutineScopeDemo()
+//            CoroutineScopeDemo()
+            BasicPagerDemo()
         }
     }
 }
