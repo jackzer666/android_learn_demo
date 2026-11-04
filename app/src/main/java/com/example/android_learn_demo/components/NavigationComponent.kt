@@ -18,9 +18,11 @@ import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Work
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -128,6 +130,9 @@ fun ScaffoldDemo() {
 
     var currentRoute by remember { mutableStateOf("home") }
 
+    // 控制弹层的显示隐藏
+    var showSheet by remember { mutableStateOf(false) }
+
     Scaffold(
         // 配置导航栏
         topBar = {
@@ -158,6 +163,19 @@ fun ScaffoldDemo() {
         ) {
             // 二级滚动tab
             CategoryTabsDemo()
+
+            Button(
+                onClick = {
+                    showSheet = true
+                }
+            ) {
+                Text("点击打开弹层")
+            }
+            if (showSheet) {
+                FilterSheetDemo(
+                    onDismiss = { showSheet = false }
+                )
+            }
         }
     }
 
@@ -237,5 +255,17 @@ fun CategoryTabsDemo() {
                 }
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterSheetDemo(
+    onDismiss: () -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss, // 取消操作
+    ) {
+        Text("这里是弹窗的内容", modifier = Modifier.padding(20.dp))
     }
 }
