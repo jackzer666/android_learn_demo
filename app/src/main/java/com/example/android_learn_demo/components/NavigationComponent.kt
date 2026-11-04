@@ -1,9 +1,14 @@
 package com.example.android_learn_demo.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
@@ -19,11 +24,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.android_learn_demo.models.TabItem
 
@@ -146,17 +155,9 @@ fun ScaffoldDemo() {
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(color = Color.Cyan),
-            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = when(currentRoute) {
-                    "home" -> "首页"
-                    "project" -> "项目"
-                    "mine" -> "我的"
-                    else -> ""
-                },
-                fontSize = 20.sp
-            )
+            // 二级滚动tab
+            CategoryTabsDemo()
         }
     }
 
@@ -183,6 +184,57 @@ fun BottomNav(
                 onClick = {
                     onTabClick(tab.route)
                 },
+            )
+        }
+    }
+}
+
+@Composable
+fun CategoryTabsDemo() {
+    val categories = listOf("全部", "Android", "Java", "Kotlin", "网络", "算法", "数据库")
+
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    SecondaryScrollableTabRow(
+        selectedTabIndex = selectedIndex,
+        edgePadding = 16.dp, // 左右边距
+        indicator = {}, // 去除默认下划线指示器
+        divider = {}, // 整个tab底部的分割线，默认的看起来像底边框
+    ) {
+        categories.forEachIndexed { index, category ->
+            Tab(
+                selected = selectedIndex == index,
+                text = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(
+                            category,
+                            fontSize = 15.sp,
+                            color = if (selectedIndex == index) Color.Black else Color.Gray,
+                            fontWeight = if (selectedIndex == index) FontWeight.Bold else FontWeight.Normal,
+                        )
+
+                        // 选中下划线 自定义
+                        if (selectedIndex == index) {
+                            Spacer(
+                                modifier = Modifier
+                                    .height(5.dp)
+                            )
+                            Box(modifier = Modifier
+                                .width(20.dp)
+                                .height(2.dp)
+                                .background(color = Color.Black)
+                            )
+                        }
+                    }
+                },
+                onClick = {
+                    selectedIndex = index
+                }
             )
         }
     }
