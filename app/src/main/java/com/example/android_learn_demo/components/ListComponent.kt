@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -29,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -290,12 +294,26 @@ fun BasicPagerDemo() {
     val colors = listOf(
         Color(0xFFE91E63),
         Color(0xFF2196F3),
-        Color(0xFF4CAF50)
+        Color(0xFF4CAF50),
+        Color(0xFF4C0F50)
     )
 
+    // 获取真实个数
+    val realCount = colors.size
+//    if (realCount == 0) return
+
+    // 设置虚拟页数为无穷大，用于做无限滚动
+    val virtualCount = Int.MAX_VALUE
+    // 设置起始页的位置，需要从中间往前取最近的0的位置，避免起始index不是0
+    val startIndex = (virtualCount / 2 / realCount) * realCount
+
     val pagerState = rememberPagerState(
-        pageCount = { colors.size }
+        initialPage = startIndex,
+        pageCount = { virtualCount }
     )
+
+    // 获取真实的索引
+    val realIndex = pagerState.currentPage % realCount
 
     // 副作用
     LaunchedEffect(pagerState) {
@@ -304,26 +322,55 @@ fun BasicPagerDemo() {
             // 如果用户在手动滑动，则跳过本次循环
             if (pagerState.isScrollInProgress) continue
 
-            val nextPage = if (pagerState.currentPage == colors.size - 1) 0 else pagerState.currentPage + 1
-            pagerState.animateScrollToPage(nextPage)
+            pagerState.animateScrollToPage(pagerState.currentPage + 1)
         }
     }
 
-    HorizontalPager(
-        state = pagerState
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(2.65f)
+            .background(color = Color.LightGray)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2.6f) // 宽高比
-                .background(colors[it]),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "第${it + 1}页",
-                fontSize = 24.sp,
-                color = Color.White
-            )
+        HorizontalPager(
+            state = pagerState
+        ) { page ->
+            // 获取真实的下表
+            val index = page % realCount
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(2.65f) // 宽高比
+                    .background(colors[index]),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "第${index + 1}页",
+                    fontSize = 24.sp,
+                    color = Color.White
+                )
+            }
         }
+
+        // 底部小圆点
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            repeat(realCount) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(
+                            if (realIndex == index) Color.White
+                            else Color.White.copy(0.5f)
+                        )
+                )
+            }
+        }
+
     }
 }
