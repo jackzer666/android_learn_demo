@@ -6,3 +6,9 @@ data class QuestionItem(
     val difficulty: Int,
     val views: Int
 )
+
+data class TodoItem(
+    val id: Int,
+    val title: String,
+    val isDone: Boolean = false // 默认未完成
+)

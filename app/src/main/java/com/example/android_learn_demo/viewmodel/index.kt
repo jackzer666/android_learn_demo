@@ -3,6 +3,7 @@ package com.example.android_learn_demo.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_learn_demo.model.QuestionItem
+import com.example.android_learn_demo.model.TodoItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,6 +93,43 @@ class LoginViewModel: ViewModel() {
                 _loginError.emit(e.message ?: "登录失败")
             }
             _loading.value = false
+        }
+    }
+}
+
+class TodoListViewModel: ViewModel() {
+    private val _todos = MutableStateFlow<List<TodoItem>>(emptyList())
+    val todos = _todos.asStateFlow()
+
+    private val _toast = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val toast = _toast.asSharedFlow()
+
+    private var nextId = 1 // 自增id
+
+    fun addTodo(title: String) {
+        if (title.isEmpty()) {
+            viewModelScope.launch {
+                _toast.emit("标题不能为空")
+            }
+            return
+        }
+
+        val newItem = TodoItem(nextId++, title, false)
+        _todos.value += newItem // 列表追加
+    }
+    fun toggleTodo(todo: TodoItem) {
+        _todos.value = _todos.value.map {
+            if (todo.id == it.id) {
+                it.copy(isDone = !it.isDone)
+            } else {
+                it
+            }
+        }
+    }
+    fun deleteTodo(todo: TodoItem) {
+        _todos.value = _todos.value.filter { it.id != todo.id }
+        viewModelScope.launch {
+            _toast.emit("删除成功：${todo.title}")
         }
     }
 }

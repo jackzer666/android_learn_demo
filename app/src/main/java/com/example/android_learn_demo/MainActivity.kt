@@ -5,9 +5,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,19 +34,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_learn_demo.viewmodel.CounterViewModel
 import com.example.android_learn_demo.viewmodel.LoginViewModel
 import com.example.android_learn_demo.viewmodel.QuestionViewModel
+import com.example.android_learn_demo.viewmodel.TodoListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            LoginScreen()
+            TodoScreen()
         }
     }
 }
@@ -179,5 +184,76 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
             Text(if (loading) "登录中..." else "登录")
         }
         Text("测试账号：admin/123456 或 test/test123", fontSize = 12.sp, color = Color.Gray)
+    }
+}
+
+@Composable
+fun TodoScreen(viewModel: TodoListViewModel = viewModel()) {
+    val todos by viewModel.todos.collectAsState()
+    var inputText by remember { mutableStateOf("") }
+
+    val ctx = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.toast.collect {
+            Toast.makeText(
+                ctx,
+                it,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            TextField(
+                value = inputText,
+                onValueChange = { inputText = it },
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("输入代办...") }
+            )
+            Button(
+                onClick = {
+                    viewModel.addTodo(inputText)
+                    inputText = ""
+                },
+            ) {
+                Text("添加")
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(todos, key = { it.id }) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .clickable {
+                            viewModel.toggleTodo(it)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        it.title,
+                        modifier = Modifier.weight(1f),
+                        textDecoration = if (it.isDone) TextDecoration.LineThrough else null,
+                        color = if (it.isDone) Color.Gray else Color.Black,
+                    )
+                    Text(
+                        "删除",
+                        color = Color.Red,
+                        modifier = Modifier.clickable { viewModel.deleteTodo(it) }
+                    )
+                }
+                HorizontalDivider()
+            }
+        }
     }
 }
