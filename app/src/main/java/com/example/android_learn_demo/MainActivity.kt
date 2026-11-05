@@ -50,6 +50,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavDemo() {
+    val tabs = listOf(
+        TabItem("首页", Icons.Filled.Home, Icons.Outlined.Home, Routes.HOME),
+        TabItem("项目", Icons.Filled.Work, Icons.Outlined.Work, Routes.PROJECT),
+        TabItem("我的", Icons.Filled.Person, Icons.Outlined.Person, Routes.MINE)
+    )
     // 创建navController 负责页面跳转
     val navController = rememberNavController()
 
@@ -59,24 +64,27 @@ fun NavDemo() {
 
     Scaffold(
         bottomBar = {
-            BottomNav(
-                currentRoute = currentRoute ?: "",
-                onTabClick = { route ->
-                    // 导航到目标 Tab 的路由，并用 lambda 配置跳转行为
-                    navController.navigate(route) {
-                        // 跳转前弹出起始页（当前项目是首页）之上的所有页面，起始页本身保留
-                        // 效果：返回栈始终保持 [首页, 当前Tab] 两层，不会越点越深；在任意 Tab 按返回键都能回到首页
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            // 被弹出页面的状态会被保存，ViewModel 也会保留（不销毁），切回时恢复
-                            saveState = true
+            if (currentRoute in tabs.map { it.route }) {
+                BottomNav(
+                    currentRoute = currentRoute ?: "",
+                    tabs = tabs,
+                    onTabClick = { route ->
+                        // 导航到目标 Tab 的路由，并用 lambda 配置跳转行为
+                        navController.navigate(route) {
+                            // 跳转前弹出起始页（当前项目是首页）之上的所有页面，起始页本身保留
+                            // 效果：返回栈始终保持 [首页, 当前Tab] 两层，不会越点越深；在任意 Tab 按返回键都能回到首页
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                // 被弹出页面的状态会被保存，ViewModel 也会保留（不销毁），切回时恢复
+                                saveState = true
+                            }
+                            // 目标页已在栈顶时复用它，不重复创建实例
+                            launchSingleTop = true
+                            // 切回该 Tab 时，重建页面并从之前保存的状态恢复
+                            restoreState = true
                         }
-                        // 目标页已在栈顶时复用它，不重复创建实例
-                        launchSingleTop = true
-                        // 切回该 Tab 时，重建页面并从之前保存的状态恢复
-                        restoreState = true
-                    }
-                },
-            )
+                    },
+                )
+            }
         }
     ) { paddingValues ->
         // 页面容器
@@ -105,13 +113,9 @@ fun NavDemo() {
 @Composable
 fun BottomNav(
     currentRoute: String,           // 当前选中的路由
-    onTabClick: (String) -> Unit    // 点击Tab的回调
+    onTabClick: (String) -> Unit,    // 点击Tab的回调
+    tabs: List<TabItem>,
 ) {
-    val tabs = listOf(
-        TabItem("首页", Icons.Filled.Home, Icons.Outlined.Home, Routes.HOME),
-        TabItem("项目", Icons.Filled.Work, Icons.Outlined.Work, Routes.PROJECT),
-        TabItem("我的", Icons.Filled.Person, Icons.Outlined.Person, Routes.MINE)
-    )
     NavigationBar {
         tabs.forEach { tab ->
             NavigationBarItem(
@@ -148,7 +152,9 @@ fun HomePage(
         )
         Button(
             onClick = {
-                navController.navigate(Routes.LOGIN) // 页面跳转
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
         ) {
             Text("去登录页")
