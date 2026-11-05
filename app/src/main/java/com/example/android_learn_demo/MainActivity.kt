@@ -1,6 +1,7 @@
 package com.example.android_learn_demo
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,18 +18,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android_learn_demo.viewmodel.CounterViewModel
+import com.example.android_learn_demo.viewmodel.LoginViewModel
 import com.example.android_learn_demo.viewmodel.QuestionViewModel
 
 class MainActivity : ComponentActivity() {
@@ -36,7 +43,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            QuestionScreen()
+            LoginScreen()
         }
     }
 }
@@ -106,5 +113,71 @@ fun QuestionScreen(viewModel: QuestionViewModel = viewModel()) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    val loading by viewModel.loading.collectAsState()
+
+    val context = LocalContext.current
+
+    // 收集登录成功事件
+    LaunchedEffect(Unit) {
+        viewModel.loginSuccess.collect {
+            Toast
+                .makeText(context, "登录成功，token:$it", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+    // 收集登录失败事件
+    LaunchedEffect(Unit) {
+        viewModel.loginError.collect {
+            Toast
+                .makeText(context, it, Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        TextField(
+            value = username,
+            onValueChange = {
+                username = it
+            },
+            label = {
+                Text("用户名")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        TextField(
+            value = password,
+            onValueChange = {
+                password = it
+            },
+            label = {
+                Text("密码")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            onClick = {
+                viewModel.login(
+                    username, password
+                )
+            },
+            enabled = !loading
+        ) {
+            Text(if (loading) "登录中..." else "登录")
+        }
+        Text("测试账号：admin/123456 或 test/test123", fontSize = 12.sp, color = Color.Gray)
     }
 }

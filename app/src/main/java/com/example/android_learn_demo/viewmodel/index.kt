@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_learn_demo.model.QuestionItem
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -49,6 +51,46 @@ class QuestionViewModel: ViewModel() {
             _loading.value = true
             delay(2000.milliseconds)
             _questionList.value = mockData
+            _loading.value = false
+        }
+    }
+}
+
+class LoginViewModel: ViewModel() {
+    // 加载状态
+    private val _loading = MutableStateFlow(false)
+    val loading = _loading.asStateFlow()
+
+    // 登录成功 一次性。设置缓冲区，保证事件不丢失
+    private val _loginSuccess = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val loginSuccess = _loginSuccess.asSharedFlow()
+
+    // 登录失败
+    private val _loginError = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val loginError = _loginError.asSharedFlow()
+
+    private val validateUsers = mapOf(
+        "admin" to "123456",
+        "test" to "test123"
+    )
+
+    fun login(username: String, password: String) {
+        if (_loading.value) return
+
+        viewModelScope.launch {
+            _loading.value = true
+            try {
+                delay(2000.milliseconds)
+                if (validateUsers[username] == password) {
+                    // 登录成功
+                    _loginSuccess.emit("sdfghjkl")
+                } else {
+                    // 登录失败
+                    _loginError.emit("用户名或密码错误")
+                }
+            } catch (e: Exception) {
+                _loginError.emit(e.message ?: "登录失败")
+            }
             _loading.value = false
         }
     }
