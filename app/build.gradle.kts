@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.0"
 }
 
 android {
@@ -37,6 +38,17 @@ android {
 }
 
 dependencies {
+    // Retrofit - 声明式API接口
+    implementation(libs.retrofit)
+    implementation(libs.converter.kotlinx.serialization)
+
+    // OkHttp - HTTP客户端 + 拦截器
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    // Kotlinx Serialization - JSON解析
+    implementation(libs.kotlinx.serialization.json)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
