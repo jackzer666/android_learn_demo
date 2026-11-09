@@ -38,6 +38,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     // Retrofit - 声明式API接口
     implementation(libs.retrofit)
     implementation(libs.converter.kotlinx.serialization)

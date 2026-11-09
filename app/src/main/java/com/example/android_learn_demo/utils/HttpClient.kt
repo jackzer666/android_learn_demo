@@ -2,6 +2,7 @@ package com.example.android_learn_demo.utils
 
 import android.util.Log
 import com.example.android_learn_demo.http.ApiService
+import com.example.android_learn_demo.model.ApiResponse
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -12,7 +13,8 @@ import java.util.concurrent.TimeUnit
 
 object HttpClient {
     // 基础地址
-    private const val BASE_URL = "http://127.0.0.1/"
+    // 10.0.2.2 是 Android 官方模拟器访问宿主电脑回环地址的特殊地址
+    private const val BASE_URL = "http://10.0.2.2:3000/"
 
     // 全局存储token
     var token = ""
@@ -73,4 +75,15 @@ object HttpClient {
 
     // 让Retrofit实现接口
     val api: ApiService = retrofit.create(ApiService::class.java)
+
+    // 封装通用请求函数
+    suspend fun<T> request(
+        call: suspend () -> ApiResponse<T>
+    ): T {
+        val response = call()
+        if (response.code == 200) {
+            return response.data ?: throw Exception("数据为空")
+        }
+        throw Exception(response.message ?: "数据为空")
+    }
 }
