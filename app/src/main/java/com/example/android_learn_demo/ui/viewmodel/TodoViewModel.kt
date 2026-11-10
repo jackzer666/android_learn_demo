@@ -1,6 +1,8 @@
 package com.example.android_learn_demo.ui.viewmodel
 
 import android.app.Application
+import androidx.datastore.dataStore
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android_learn_demo.data.local.TodoPreferences
@@ -49,4 +51,5 @@ class TodoViewModel(application: Application): AndroidViewModel(application) {
         _todos.value = _todos.value.filter { it.id != id }
         saveToDataStore(_todos.value)
     }
+
 }

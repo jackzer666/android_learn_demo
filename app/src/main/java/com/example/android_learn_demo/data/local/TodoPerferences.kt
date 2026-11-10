@@ -39,4 +39,14 @@ class TodoPreferences(context: Context) {
             else json.decodeFromString(ListSerializer(TodoItem.serializer()), jsonStr)
         }.first()
     }
+
+
+
+    private val NICKNAME_KEY = stringPreferencesKey("nick_name")
+    suspend fun saveNickName(name: String) {
+        dataStore.edit { it[NICKNAME_KEY] = name }
+    }
+    suspend fun getNickName(): String {
+        return dataStore.data.map { it[NICKNAME_KEY] ?: "" }.first()
+    }
 }
